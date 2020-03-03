@@ -1,24 +1,23 @@
 // @ts-nocheck
 import React, { Component } from 'react';
 import Axios from 'axios';
+import swal from 'sweetalert2'
 import './App.css';
 import './RETRO-bootstrap.css';
 import Quote from './components/Quote';
 import Weather from './components/Weather';
+import Todos from './components/Todos/Todos';
+import AddTodo from './components/Todos/AddTodo';
 class App extends Component {
   state = {
     image: {},
     quote: {},
     weather: [],
     main: {},
-    sys: {},
     details: [],
-    // date: new Date(),
     todos: []
-
   }
   componentDidMount() {
-    // GET BACKGROUND IMAGE
     Axios.get('//bcw-sandbox.herokuapp.com/api/images')
       .then(res => this.setState({
         image: res.data.large_url
@@ -31,29 +30,117 @@ class App extends Component {
       .then(res => this.setState({
         weather: res.data,
         main: res.data.main,
-        // main: ((res.data.main.temp - 273.15) * 1.8 + 32).toFixed(0),
-        sys: res.data.sys,
         details: res.data.weather[0]
       }))
+    Axios.get('https://bcw-sandbox.herokuapp.com/api/peyton/todos')
+      .then(res => this.setState({ todos: res.data.data }))
+  }
+  addTodo = (description) => {
+    // @ts-ignore
+    const toast = swal.mixin({
+      toast: true,
+      position: "top-left",
+      showConfirmButton: false,
+      timer: 2000
+    });
+    Axios.post('https://bcw-sandbox.herokuapp.com/api/peyton/todos/', {
+      description: description,
+      completed: false
+    })
+      .then(res => this.setState({
+        todos:
+          [...this.state.todos, res.data.data]
+      }),
+        toast.fire(
+          'Created!', "",
+          'success'
+        )
+      )
+  }
+  deleteTodo = (_id) => {
+    const toast = swal.mixin({
+      toast: true,
+      position: "top-left",
+      showConfirmButton: false,
+      timer: 2000
+    });
+    // @ts-ignore
+    swal.fire({
+      text: "Are you sure?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    })
+    Axios.delete(`https://bcw-sandbox.herokuapp.com/api/peyton/todos/${_id}`)
+      .then(res => this.setState({
+        todos:
+          [...this.state.todos.filter(todo => todo._id !== _id)]
+      }),
+        toast.fire(
+          'Deleted!', "",
+          'success'
+        )
+      )
+  }
+  markComplete = (_id) => {
+    // @ts-ignore
+    const toast = swal.mixin({
+      toast: true,
+      position: "top-left",
+      showConfirmButton: false,
+      timer: 2000
+    });
+    Axios.put(`https://bcw-sandbox.herokuapp.com/api/peyton/todos/${_id}`)
+      .then(this.setState({
+
+        todos: this.state.todos.map(todo => {
+          if (todo._id === _id) {
+            todo.completed = !todo.completed
+            toast.fire(
+              'Complete!', "",
+              'success'
+            )
+          } else {
+            toast.fire(
+              'Incomplete!', "",
+              'error'
+            )
+          }
+          return todo;
+        })
+      })
+      )
   }
   render() {
     return (
-      <div id="apiImg" className="App text-secondary text-center container-fluid"
+      <div id="apiImg" className="App eightBit text-secondary text-center container-fluid"
         style={{ backgroundImage: `url(${this.state.image})` }}>
         <div className="row">
-          <div className="col window mt-2">
-            <h1>inspire</h1>
+          <div className="col topWindow mt-1 text-secondary">
+            <h3>Hello, Peyton.</h3>
           </div>
         </div>
-        <div className="row justify-content-end mt-2 mr-1">
-          <div className="col-3 window">
+        <div className="row justify-content-end mt-1">
+          <div className="col-3 midWindow">
             <Weather
               weather={this.state.weather}
               main={this.state.main}
+              details={this.state.details}
             />
           </div>
         </div>
-        <marquee className="window text-center fixed-bottom mb-2">
+        <div className="row justify-content-end mt-1">
+          <div className="col-4 midWindow">
+            <Todos
+              todos={this.state.todos}
+              markComplete={this.markComplete}
+              deleteTodo={this.deleteTodo} />
+            <AddTodo addTodo={this.addTodo} />
+          </div>
+        </div>
+        <marquee className="bottomWindow text-center fixed-bottom mb-1">
           <Quote quote={this.state.quote} />
         </marquee>
       </div>
