@@ -12,6 +12,14 @@ class Clock extends Component {
     if (h > 12) {
       h = h - 12
     }
+    if (m < 10) {
+      // @ts-ignore
+      m = "0" + m;
+    }
+    if (s < 10) {
+      // @ts-ignore
+      s = "0" + s;
+    }
     document.getElementById("time").innerHTML = h + ":" + m + ":" + s;
   }
   componentDidMount() {
@@ -19,8 +27,7 @@ class Clock extends Component {
   }
   render() {
     return (
-      <div id="time">
-      </div>
+      <div id="time"></div>
     )
   }
 }

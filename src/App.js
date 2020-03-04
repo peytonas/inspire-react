@@ -125,7 +125,7 @@ class App extends Component {
           </div>
         </div>
         <div className="row justify-content-between mt-1">
-          <div className="col-3 midWindow">
+          <div className="col-3 midWindow text-success">
             <h4 className="mt-2"><Clock /></h4>
           </div>
           <div className="col-3 midWindow">
