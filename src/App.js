@@ -8,6 +8,7 @@ import Quote from './components/Quote';
 import Weather from './components/Weather';
 import Todos from './components/Todos/Todos';
 import AddTodo from './components/Todos/AddTodo';
+import Clock from './components/Clock';
 class App extends Component {
   state = {
     image: {},
@@ -33,7 +34,8 @@ class App extends Component {
         details: res.data.weather[0]
       }))
     Axios.get('https://bcw-sandbox.herokuapp.com/api/peyton/todos')
-      .then(res => this.setState({ todos: res.data.data }))
+      .then(res => this.setState({ todos: res.data.data }),
+        document.getElementById('todo-counter').innerHTML = "Total: " + this.state.todos.length)
   }
   addTodo = (description) => {
     // @ts-ignore
@@ -122,7 +124,10 @@ class App extends Component {
             <h3>Hello, Peyton.</h3>
           </div>
         </div>
-        <div className="row justify-content-end mt-1">
+        <div className="row justify-content-between mt-1">
+          <div className="col-3 midWindow">
+            <h4 className="mt-2"><Clock /></h4>
+          </div>
           <div className="col-3 midWindow">
             <Weather
               weather={this.state.weather}
@@ -132,12 +137,14 @@ class App extends Component {
           </div>
         </div>
         <div className="row justify-content-end mt-1">
-          <div className="col-4 midWindow">
+          <div className="col-4 midWindow overflow">
             <Todos
               todos={this.state.todos}
               markComplete={this.markComplete}
               deleteTodo={this.deleteTodo} />
-            <AddTodo addTodo={this.addTodo} />
+            <AddTodo
+              addTodo={this.addTodo} />
+            <div id="todo-counter" className="mt-1"></div>
           </div>
         </div>
         <marquee className="bottomWindow text-center fixed-bottom mb-1">
