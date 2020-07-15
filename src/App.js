@@ -18,6 +18,8 @@ class App extends Component {
     details: [],
     todos: []
   }
+  //SECTION axios .
+
   componentDidMount() {
     Axios.get('//bcw-sandbox.herokuapp.com/api/images')
       .then(res => this.setState({
@@ -37,6 +39,9 @@ class App extends Component {
       .then(res => this.setState({ todos: res.data.data }),
         document.getElementById('todo-counter').innerHTML = "Total: " + this.state.todos.length)
   }
+  //!SECTION
+
+  // SECTION todo functions .
   addTodo = (description) => {
     // @ts-ignore
     const toast = swal.mixin({
@@ -115,6 +120,7 @@ class App extends Component {
       })
       )
   }
+  //!SECTION
   render() {
     return (
       <div id="apiImg" className="App eightBit text-secondary text-center container-fluid"
@@ -125,10 +131,10 @@ class App extends Component {
           </div>
         </div>
         <div className="row justify-content-between mt-1">
-          <div className="col-3 midWindow text-success">
+          <div className="col-1 midWindow text-success">
             <h4 className="mt-2"><Clock /></h4>
           </div>
-          <div className="col-3 midWindow">
+          <div className="col-2 midWindow">
             <Weather
               weather={this.state.weather}
               main={this.state.main}
@@ -136,7 +142,7 @@ class App extends Component {
             />
           </div>
         </div>
-        <div className="row justify-content-end mt-1">
+        <div className="row justify-content-center mt-1">
           <div className="col-4 midWindow overflow">
             <Todos
               todos={this.state.todos}
@@ -145,6 +151,7 @@ class App extends Component {
             <AddTodo
               addTodo={this.addTodo} />
             <div id="todo-counter" className="mt-1"></div>
+            {/* FIXME */}
           </div>
         </div>
         <marquee className="bottomWindow text-center fixed-bottom mb-1">
